@@ -142,6 +142,8 @@ namespace GooDDevWebSite.Controllers
             DoubleEncoding encoder = new();
             name = encoder.Encode(name);
             MyTask model = (await Database.Read<MyTask>($"SELECT * FROM Tasks WHERE name='{name}'", Parsers.ParseTasks)).Single();
+            model.Images = Directory.GetFiles(environment.WebRootPath + '/' + model.FoulderName)
+                .Where(x => x.Contains("img")).Select(x => x.Replace(environment.WebRootPath, "")).ToList(); // looks scary
             return View(model);
         }
         public IActionResult Comment(string text, string author, string task)

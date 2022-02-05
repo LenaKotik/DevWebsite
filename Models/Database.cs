@@ -124,8 +124,12 @@ namespace GooDDevWebSite.Models
                     x => (x != "") ? encoder.Decode(x) : x
                     ).ToList(); 
                 */
+                t.MaterialLinks = new List<string>();
                 foreach (string lnk in materials.Split(':'))
+                {
+                    if (lnk == null) throw new NullReferenceException("BBBBBBB");
                     t.MaterialLinks.Add(encoder.Decode(lnk));
+                }
                 t.FoulderName = (string)rdr["fldr"];
                 res.Add(t);
             }

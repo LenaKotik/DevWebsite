@@ -3,9 +3,9 @@ CREATE TABLE Users
 id INT IDENTITY PRIMARY KEY not null,
 email VARCHAR(30) not null,
 password password(60) not null,
-ROLE INT not null DEFAULT(0),
+ROLE TINYINT not null DEFAULT(0),
 name VARCHAR(60) not null
-); -- 150 + 8 (int) = 158 bytes
+); -- 150 + 5 (int) = 155 bytes
 CREATE TABLE Materials
 (
 id INT IDENTITY PRIMARY KEY not null,
@@ -28,6 +28,6 @@ flags VARCHAR(500) not null default(''),
 imgs INT not null default(0), -- will be removed
 links VARCHAR(300) not null default(''),
 fldr VARCHAR(30) not null,
-role INT not null default(0),
+role TINYINT not null default(0),
 category VARCHAR(50) not null default('')
-); -- 2000 + 12 = 2012 bytes
+); -- 2000 + 9 = 2009 bytes

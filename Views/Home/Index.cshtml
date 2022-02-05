@@ -1,0 +1,31 @@
+﻿@model User?
+@{
+    ViewData["Title"] = "Работа";
+}
+<h1>@ViewData["Title"]</h1>
+
+@if (Model != null)
+{
+<h2>Добро пожаловать, @Model.Name!</h2>
+<a class="alert" asp-controller="Home" asp-action="SignOut">Выйти</a><br />
+<hr />
+@if (Model.Role == Role.None)
+                {
+                    <p>Для вас нет работы</p>
+                }
+else
+                {
+                    // подборка задач
+                }
+@if (Model.Role == Role.Admin || Model.Role == Role.Manager)
+                {
+                    <a asp-action="CreateTask" asp-controller="Home">Добавить задачу</a>
+                }
+<hr />
+<a asp-action="Index" asp-controller="Materials">Перейти к материалам</a><br />
+<a asp-action="Tasks" asp-controller="Home">Открыть все задачи</a><br />
+}
+else
+{
+<h2><a asp-action="SignIn" asp-controller="Home">Войти</a></h2>
+}

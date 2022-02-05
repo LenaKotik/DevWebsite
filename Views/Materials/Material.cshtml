@@ -1,0 +1,48 @@
+﻿@model Material
+
+@{ 
+    ViewData["Title"] = System.IO.Path.GetFileNameWithoutExtension(Model.Name);
+}
+<div class="text-md-left">
+<h2>@ViewData["Title"]</h2>
+<h5>файл с расширением *@(System.IO.Path.GetExtension(Model.Name))</h5>
+<strong style="font-style:italic; text-align:left;">Создан:@(Model.Author)</strong>
+
+<p>@Model.Description</p>
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px;">
+    <ul class="nav nav-pills flex-column mb-auto">
+        @foreach (string path in Model.Images)
+        {
+                <li><img src="@(path)" alt="@(System.IO.Path.GetFileName(path))"/></li>
+        }
+    </ul>
+</div>
+    <form asp-action="Download" asp-controller="Materials">
+        <input type="submit" value="Скачать" />
+        <input type="hidden" value="@(System.IO.Path.GetExtension(Model.Name))" name="ext"/>
+        <input type="hidden" value="@(Model.FolderName)" name="f"/>
+    </form>
+    <hr />
+    <h5>Комментарии:</h5>
+    @if (Context.Request.Cookies.ContainsKey("username"))
+    {
+
+    <form class="comment" asp-action="Comment" asp-controller="Materials">
+        <strong>@Context.Request.Cookies["username"]</strong><br />
+        <textarea style="resize:none; width:50%" placeholder="Оставить коментарий..." name="text" required></textarea><input type="submit" value="Отправить"/>
+        <input type="hidden" value="@(Context.Request.Cookies["username"])" name="author" required/>
+        <input type="hidden" value="@Model.Name" name="material"/>
+    </form>
+    }
+    else
+    {
+       <a asp-action="SignIn" asp-controller="Home">Войти</a>
+    }
+    @foreach (KeyValuePair<string,string> comment in Model.Comments)
+        {
+     <div class="comment">
+         <strong>@comment.Key</strong>
+         <pre>@comment.Value</pre>
+     </div>
+        }
+</div>

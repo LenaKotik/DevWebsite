@@ -1,0 +1,103 @@
+﻿@model Material?
+@{ 
+    ViewData["Title"] = "Редактор";
+}
+<body>
+    @if (Model != null)
+            {
+        // script for autocomplition when updating existing material
+    <script>
+        var nameinp = document.getElementById("name");
+        nameinp.setAttribute("value", "@(Model.Name)");
+        var descinp = document.getElementById("desc");
+        descinp.setAttribute("value", "@(Model.Description)");
+        var catinp = document.getElementsByName("cat");
+        catinp.forEach(function (v, k, p)
+        {
+            if (v.getAttribute("value") == @(Model.Category))
+                v.setAttribute("checked", "checked");
+        });
+    </script>
+        }
+    <script>
+        var subcatinp = document.getElementsByName("subcat");
+        subcatinp.forEach(function (v, k, p)
+        {
+            if (v.value == '@((Model != null)?Model.Category:"some imposible value")')
+                v.checked = true;
+        });
+        function createSubcat(k) {
+            var subcats = [
+                ["Монстры", "НПС", "Растения", "Предметы быта", "Оружие", "Доспехи", "Здания"],
+                ["Монстры", "НПС", "Растения", "Предметы быта", "Оружие", "Доспехи", "Здания"],
+                ["Истории НПС", "Задания и диалоги", "История мира", "Легенды", "Книги"],
+                ["Озвучка персонажей", "Звуки окружающего мира", "Звуки игрока", "Звуки монстров"],
+                ["Приёмы мобов", "Приёмы игроков", "Приёмы НПС", "Рост растений", "Действия НПС", "Действия игроков", "Действия Мобов", "Другое"],
+            ];
+            var num = 0;
+            switch (k) {
+                case 0:
+                case 1:
+                    num = 7;
+                    break;
+                case 2:
+                    num = 5;
+                    break;
+                case 3:
+                    num = 4
+                    break;
+                case 4:
+                    num = 8;
+                    break;
+            }
+            document.getElementById("subcat").innerHTML = "";
+            for (var i = 0; i < num; i++) {
+                var label = document.createElement("label");
+                var radio = document.createElement("input");
+                label.appendChild(radio);
+                radio.name = "subcat";
+                radio.type = "radio";
+                radio.value = subcats[k][i];
+                label.innerHTML += subcats[k][i];
+                document.getElementById("subcat").appendChild(label);
+                document.getElementById("subcat").appendChild(document.createElement("br"));
+            }
+        }
+        function setRadio() {
+            var catinp = document.getElementsByName("cat");
+            catinp.forEach(function (v, k, p) {
+                if (v.checked) {
+                    createSubcat(k);
+                }
+            });
+        }
+    </script>
+    @if (ViewData.ContainsKey("CategoryPre"))
+            {
+                <script>
+                    catinp.forEach(function (v, k, p) {
+                        if (v.innerText == @(ViewData["CategoryPre"]))
+                            v.checked = true;
+                    });
+                </script>
+            }
+    <form method="post" asp-action="@((Model != null) ? "Update" : "Upload")" asp-controller="Materials" enctype="multipart/form-data">
+        <label>Категория</label>
+        <div onclick="setRadio()" id="cat" class="container">
+            <label><input type="radio" name="cat" value="image" />Изображения</label><br />
+            <label><input type="radio" name="cat" value="model" />Модельки</label><br />
+            <label><input type="radio" name="cat" value="text" />Текстовая Информация</label><br />
+            <label><input type="radio" name="cat" value="sound" />Звуки</label><br />
+            <label><input type="radio" name="cat" value="animation" />Анимации</label><br />
+        </div>
+        <label>Подкатегория</label>
+        <div id="subcat" class="container">
+        </div>
+        <label><input type="file" name="file" max="1"/>@((Model != null) ? "Обновить" : "Загрузить") файл</label><br />
+        <label><input type="file" name="images" multiple />Загрузить картинки</label><br />
+        <input id="name" type="text" name="name" maxlength="30" /><br />
+        <textarea style="resize: none; width: 70%" id="desc" name="description" maxlength="199" ></textarea><br/>
+        <input type="submit" value="Сохранить"/>
+        <input type="hidden" value="@(Context.Request.Cookies["username"])" name="author"/>
+    </form>
+</body>

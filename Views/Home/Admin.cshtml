@@ -1,0 +1,133 @@
+﻿
+@model AdminViewModel
+@{
+        ViewData["Title"] = (ViewData["username"]==null)?"?":ViewData["username"];
+}
+@if (ViewData.ContainsKey("username"))
+{
+    <h2>Добро пожаловать @ViewData["username"].ToString().Replace('<', 'ඞ').Replace('>', 'ඞ')!</h2> //looks ugly, but should work against XSS
+    <div id="users">
+
+    <h5>Пользователи</h5>
+    <table class="table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    Email
+                </th>
+               <!--   
+                <td>
+                    <strong>Пароль</strong>
+                </td>
+               --> 
+                <th>
+                    Роль
+                </th>
+                <th>
+                    Имя
+                </th>
+            </tr>
+        </thead>
+        <tbody>      
+            @foreach (User u in Model.Users)
+                {
+                <tr>
+                    <td>@u.Email</td>
+                    <!--<td>@u.Password</td>-->
+                    <td><mark class="Role-@u.Role">@u.Role</mark></td>
+                    <td>@u.Name</td>
+                </tr>
+                }
+        </tbody>
+    </table>
+        <h6>Добавить нового</h6>
+    <form method="post" asp-action="NewUser" asp-controller="Home">
+        <input type="text" name="Name" placeholder="имя" />
+        <input type="email" name="Email" placeholder="email"/>
+        <label>Выберите роль
+            <select name="Role">
+                <option value="0" selected="selected">Никакая</option>
+                <option value="1">Программист</option>
+                <option value="2">Менеджер</option>
+                <option value="3">Сценарист</option>
+                <option value="4">Художник</option>
+                <option value="5">Моделер</option>
+                <option value="6">Звуковик</option>
+                <option value="7">Администратор</option>
+            </select>
+        </label>
+        <input type="password" name="Password" placeholder="пароль" />
+        <input type="submit" value="Сохранить"/>
+        <input type="hidden" value="@(ViewData["username"])" name="author" />
+    </form>
+        @if (ViewData.ContainsKey("UserFormErr"))
+                {
+            <pre class="alert-danger">@(ViewData["UserFormErr"])</pre>
+                }
+    </div>
+    <hr />
+    <div id="materials">
+        <h5>Материалы</h5>
+        <table class="table-bordered">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Опубликован</th>
+                    <th>Папка</th>
+                    <th>Кол-во картиноk</th>
+                    <th>Категория</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(Material m in Model.Materials)
+                {
+                <tr>
+                    <td>@(m.Name)</td>
+                    <td>@(m.Author)</td>
+                    <td>@(m.FolderName)</td>
+                    <td>@(m.Images)</td>
+                    <td>@(m.Category)</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <hr />
+    <div id="tasks">
+        <table class="table-bordered">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Опубликован</th>
+                    <th>Категория</th>
+                    <th>Метки</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (MyTask t in Model.Tasks)
+                {
+                <tr>
+                    <td>@(t.Name)</td>
+                    <td>@(t.Author)</td>
+                    <td>@(t.Role)</td>
+                    <td>@foreach (KeyValuePair<string, string> flag in t.Flags) { <span class="flag-@(flag.Value)">@flag.Value</span>}</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <form asp-action="Admin" asp-controller="Home" method="get">
+        <label>
+            Введите имя пользователя
+        <input type="text" placeholder="Имя пользователя" name="username"/>
+        </label>
+        <label>
+            Введите пароль ещё раз
+        <input type="password" placeholder="Пароль" name="pwd"/>
+        </label>
+        <input type="submit" value="Зайти" />
+    </form>
+}

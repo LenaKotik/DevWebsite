@@ -1,0 +1,48 @@
+﻿@model List<MyTask>
+@{ 
+    ViewData["Title"] = "Все задания";
+}
+@if (Model.Count > 0)
+{
+
+<script>
+    function search() {
+        var string = $("#search input")[0].value;
+        var amnt = 0 + $("#amntToShow input")[0].value;
+        var satisfied = $("#pool div").find("#" + string + " div.task").clone(true);
+        for (var i = 0; i < amnt; i++) {
+            $("#show div")[0].appendChild(satisfied[(i < satisfied.length) ? i : satisfied.length-1]);
+        }
+    }
+</script>
+<div>
+    <!--
+        
+    <input onchange="search()" type="text" id="search" placeholder="Искать"/>
+    <label id="lbl">Показать 10</label><br/>
+    <input onchange="search()" type="range" value="10" min="1" max="20" step="1" id="amntToShow"/>
+    <div id="show">
+
+    </div>
+    -->
+    <div id="pool">
+    @foreach (MyTask task in Model)
+    {
+        <div onclick="window.location.replace('/Home/Task?name=@(task.Name)')" id="@(task.Name)" class="task">
+            <strong>@task.Name</strong><br />
+            <p>@((task.Description.Length > 15) ? task.Description.Substring(0, 15) + "..." : task.Description)</p>
+            <p>
+            @foreach (KeyValuePair<string, string> flag in task.Flags)
+            {
+                    <mark class="flag-@(flag.Value)">@flag.Value</mark>
+            }
+            </p>
+        </div>
+    }
+    </div>
+</div>
+}
+else
+{
+    <h2>Тут ничего нет! :/</h2>
+}

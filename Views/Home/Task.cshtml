@@ -1,0 +1,48 @@
+﻿@model MyTask
+@{ 
+    ViewData["Title"] = Model.Name;
+}
+@if (Model == null)
+            {
+                <p>feeeeedd</p>
+            }
+            else
+            {
+
+<div>
+    <h1>@Model.Name</h1>
+    <hr />
+    <p>
+        @Model.Description
+    </p>
+    <ul>
+        @foreach (string path in Model.Images)
+        {
+            <li><img src="@(path)" alt="@(System.IO.Path.GetFileName(path))" /></li>
+        }
+    </ul>
+    <hr />
+    <h5>Комментарии:</h5>
+    @if (Context.Request.Cookies.ContainsKey("username"))
+    {
+
+        <form class="comment" asp-action="Comment" asp-controller="Home">
+            <strong>@Context.Request.Cookies["username"]</strong><br />
+            <textarea style="resize:none; width:50%" placeholder="Оставить коментарий..." name="text" required></textarea><input type="submit" value="Отправить" />
+            <input type="hidden" value="@(Context.Request.Cookies["username"])" name="author" required />
+            <input type="hidden" value="@Model.Name" name="task" />
+        </form>
+    }
+    else
+    {
+        <a asp-action="SignIn" asp-controller="Home">Войти</a>
+    }
+    @foreach (KeyValuePair<string, string> comment in Model.Comments)
+    {
+        <div class="comment">
+            <strong>@comment.Key</strong>
+            <pre>@comment.Value</pre>
+        </div>
+    }
+</div>
+}

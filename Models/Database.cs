@@ -119,9 +119,13 @@ namespace GooDDevWebSite.Models
                     t.commentsRaw += $"{encoder.Decode(parts[0])}:{encoder.Decode(parts[1])};";
                 }
                 string materials = (string)rdr["links"];
+                /*
                 t.MaterialLinks = materials.Split(':').Select(   // WTF?
                     x => (x != "") ? encoder.Decode(x) : x
-                    ).ToList();
+                    ).ToList(); 
+                */
+                foreach (string lnk in materials.Split(':'))
+                    t.MaterialLinks.Add(encoder.Decode(lnk));
                 t.FoulderName = (string)rdr["fldr"];
                 res.Add(t);
             }

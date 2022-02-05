@@ -74,7 +74,6 @@
                     <th>Название</th>
                     <th>Опубликован</th>
                     <th>Папка</th>
-                    <th>Кол-во картиноk</th>
                     <th>Категория</th>
                 </tr>
             </thead>
@@ -85,7 +84,6 @@
                     <td>@(m.Name)</td>
                     <td>@(m.Author)</td>
                     <td>@(m.FolderName)</td>
-                    <td>@(m.Images)</td>
                     <td>@(m.Category)</td>
                 </tr>
                 }
@@ -94,11 +92,13 @@
     </div>
     <hr />
     <div id="tasks">
+        <h5>Задачи</h5>
         <table class="table-bordered">
             <thead>
                 <tr>
                     <th>Название</th>
                     <th>Опубликован</th>
+                    <th>Папка</th>
                     <th>Категория</th>
                     <th>Метки</th>
                 </tr>
@@ -109,6 +109,7 @@
                 <tr>
                     <td>@(t.Name)</td>
                     <td>@(t.Author)</td>
+                    <td>@(t.FoulderName)</td>
                     <td>@(t.Role)</td>
                     <td>@foreach (KeyValuePair<string, string> flag in t.Flags) { <span class="flag-@(flag.Value)">@flag.Value</span>}</td>
                 </tr>

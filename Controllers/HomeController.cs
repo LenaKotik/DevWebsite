@@ -12,17 +12,9 @@ using System.Threading.Tasks;
 
 /*
  TODO:
- * add a task editor
- * * task saving
  * add a task view
  * * flags interaction
  * add task classification
- * refactoring
- * * rewrite file upload manager
- * polishing
- * * html
- * * css
- * * js/jquery
  */
 namespace GooDDevWebSite.Controllers
 {
@@ -85,8 +77,9 @@ namespace GooDDevWebSite.Controllers
                 {
                     List<User> u = await Database.Read<User>("SELECT * FROM Users", Parsers.ParseUsers);
                     List<Material> m = await Database.Read<Material>("SELECT * FROM Materials", Parsers.ParseMaterials);
+                    List<MyTask> t = await Database.Read<MyTask>("SELECT * FROM Tasks", Parsers.ParseTasks);
                     AdminViewModel model = new AdminViewModel()
-                    {Users = u,Materials=m};
+                    {Users = u,Materials = m,Tasks = t};
                     ViewData["username"] = encoder.Decode(username);
                     return View(model);
                 }
@@ -125,6 +118,15 @@ namespace GooDDevWebSite.Controllers
             List<Material> model = await Database.Read<Material>("SELECT * FROM Materials", Parsers.ParseMaterials);
             return View("Editor", model);
         }
+        public IActionResult Flag(string name, string task, string flag)
+        {
+            DoubleEncoding encoder = new DoubleEncoding();
+            string encname = encoder.Encode(name);
+            task = encoder.Encode(task);
+            flag = encoder.Encode(flag);
+            Database.Execute($"UPDATE Tasks SET flags=flags + '{encname}:{flag};' WHERE name='{task}';");
+            return Redirect($"/Home/Task?name={name}");
+        }
         public IActionResult UploadTask(Role role, string name, string description, IFormFileCollection? images, string author, string materialLinks)
         {
             if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
@@ -134,12 +136,15 @@ namespace GooDDevWebSite.Controllers
         }
         async public Task<IActionResult> Tasks()
         {
+            if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
             List<MyTask> model = await Database.Read<MyTask>("SELECT * FROM Tasks", Parsers.ParseTasks);
             return View(model);
         }
         async public Task<IActionResult> Task(string name)
         {
+            if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
             DoubleEncoding encoder = new();
+            ViewData["user"] = (await Database.Read<User>($"SELECT * FROM Users WHERE name='{encoder.Encode(HttpContext.Request.Cookies["username"])}';", Parsers.ParseUsers)).Single();
             name = encoder.Encode(name);
             MyTask model = (await Database.Read<MyTask>($"SELECT * FROM Tasks WHERE name='{name}'", Parsers.ParseTasks)).Single();
             model.Images = Directory.GetFiles(environment.WebRootPath + '/' + model.FoulderName)

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using System.Text.Json;
+using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,8 +14,6 @@ using System.Threading.Tasks;
 
 /*
  TODO:
- * add a task view
- * * flags interaction
  * add task classification
  */
 namespace GooDDevWebSite.Controllers
@@ -34,8 +34,12 @@ namespace GooDDevWebSite.Controllers
             if (HttpContext.Request.Cookies.ContainsKey("email"))
             {
                 List<User> users = (await Database.Read<User>($"SELECT * FROM Users WHERE email = '{HttpContext.Request.Cookies["email"]}'", Parsers.ParseUsers));
-                return View(users.Single());
+                ViewData["User"] = users.Single();
+                List<MyTask> model = await Database.Read<MyTask>("SELECT * FROM Tasks", Parsers.ParseTasks);
+                model = (model.Where(x => x.Flags.Any(x => x.Value == "Срочно")).Concat(model.Where(x => !x.Flags.Any(x => x.Value == "Срочно")))).Take(10).ToList(); // scary LINQ thing that takes 10 tasks, ordered by "Срочно" flag
+                return View(model);
             }
+            ViewData["User"] = null;
             return View();
         }
         async public Task<IActionResult> AdminLogIn()
@@ -47,6 +51,17 @@ namespace GooDDevWebSite.Controllers
                     return View("Admin");
             }
             return NotFound();
+        }
+        async public Task<IActionResult> GetBackup()
+        {
+            List<User> u = await Database.Read<User>("SELECT * FROM Users", Parsers.ParseUsersEncoded);
+            List<Material> m = await Database.Read<Material>("SELECT * FROM Materials", Parsers.ParseMaterialsEncoded);
+            List<MyTask> t = await Database.Read<MyTask>("SELECT * FROM Tasks", Parsers.ParseTasksEncoded);
+            AdminViewModel model = new AdminViewModel()
+            { Users = u, Materials = m, Tasks = t };
+            string json = JsonSerializer.Serialize(model);
+            byte[] buffer = ASCIIEncoding.ASCII.GetBytes(json);
+            return File(buffer, "application/json", "database.json");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -60,6 +60,26 @@ namespace GooDDevWebSite.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        async public Task<IActionResult> DeleteComment(string text, string author, string task) // MUST BE OPTIMIZED
+        {
+            if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
+            DoubleEncoding encoder = new();
+            task = encoder.Encode(task);
+            string encauthor = encoder.Encode(author);
+            MyTask target = (await Database.Read<MyTask>($"SELECT * FROM Tasks WHERE author='{encauthor}' AND name='{task}';", Parsers.ParseTasks)).Single();
+            target.Comments.Remove(new KeyValuePair<string, string>(author, text)); // should remove exactly one comment
+            string comments = "";
+            foreach (string comment in target.commentsRaw.Split(';'))
+            {
+                if (comment == "") break;
+                string[] parts = comment.Split(':');
+                comments += $"{encoder.Encode(parts[0])}:{encoder.Decode(parts[1])};";
+            }
+            Database.Execute($"UPDATE Tasks WHERE name='{task}' SET comments='{comments}'");
+            return Redirect($"/Tasks/At?name={task}");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Comment(string text, string author, string task)
         {
             if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");

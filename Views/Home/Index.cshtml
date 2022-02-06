@@ -1,31 +1,48 @@
-﻿@model User?
+﻿@model List<MyTask>
 @{
     ViewData["Title"] = "Работа";
+    User? user = (User?)ViewData["User"];
 }
 <h1>@ViewData["Title"]</h1>
 
-@if (Model != null)
+@if (user != null)
 {
-<h2>Добро пожаловать, @Model.Name!</h2>
-<a class="alert" asp-controller="Home" asp-action="SignOut">Выйти</a><br />
-<hr />
-@if (Model.Role == Role.None)
-                {
-                    <p>Для вас нет работы</p>
-                }
-else
-                {
-                    // подборка задач
-                }
-@if (Model.Role == Role.Admin || Model.Role == Role.Manager)
-                {
-                    <a asp-action="Create" asp-controller="Tasks">Добавить задачу</a>
-                }
-<hr />
-<a asp-action="Index" asp-controller="Materials">Перейти к материалам</a><br />
-<a asp-action="Index" asp-controller="Tasks">Открыть все задачи</a><br />
+    <h2>Добро пожаловать, @user.Name!</h2>
+    <a class="alert" asp-controller="Home" asp-action="SignOut">Выйти</a>
+    <br />
+    <hr />
+    @if (user.Role == Role.None)
+    {
+        <p>Для вас нет работы</p>
+    }
+    else
+    {
+        foreach (MyTask task in Model)
+        {
+            <div onclick="window.location.replace('/Tasks/At?name=@(task.Name)')" id="@(task.Name)" class="task">
+                <strong>@task.Name</strong><br />
+                <p>@((task.Description.Length > 15) ? task.Description.Substring(0, 15) + "..." : task.Description)</p>
+                <p>
+                    @foreach (KeyValuePair<string, string> flag in task.Flags)
+                    {
+                        <mark class="flag-@(flag.Value)">@flag.Value</mark>
+                    }
+                </p>
+                <span>@task.Role</span>
+            </div>
+        }
+    }
+    @if (user.Role == Role.Admin || user.Role == Role.Manager)
+    {
+        <a asp-action="Create" asp-controller="Tasks">Добавить задачу</a>
+    }
+    <hr />
+    <a asp-action="Index" asp-controller="Materials">Перейти к материалам</a>
+    <br />
+    <a asp-action="Index" asp-controller="Tasks">Открыть все задачи</a>
+    <br />
 }
 else
 {
-<h2><a asp-action="SignIn" asp-controller="Home">Войти</a></h2>
+    <h2><a asp-action="SignIn" asp-controller="Home">Войти</a></h2>
 }

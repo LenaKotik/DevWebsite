@@ -266,3 +266,6 @@ C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\GooDDevWebSite.genru
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Tasks\Editor.cshtml.g.cs
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Tasks\Task.cshtml.g.cs
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Tasks\Tasks.cshtml.g.cs
+C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Home\Editor.cshtml.g.cs
+C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Home\Task.cshtml.g.cs
+C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Home\Tasks.cshtml.g.cs

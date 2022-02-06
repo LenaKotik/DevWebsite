@@ -54,6 +54,55 @@ namespace GooDDevWebSite.Models
     }
     public static class Parsers
     {
+        public static List<User> ParseUsersEncoded(SqlDataReader rdr)
+        {
+            var res = new List<User>();
+            while (rdr.Read())
+            {
+                User u = new User();
+                u.Name = (string)rdr["name"];
+                u.Email = (string)rdr["email"];
+                u.Password = (string)rdr["password"];
+                // 'use enums' they said, 'it will make your code look better!' they said
+                u.Role = User.GetRole((int?)((rdr["ROLE"] != DBNull.Value) ? rdr["ROLE"] : null)); //it's uppercase because i'm dum and i can't change it in SQL
+                res.Add(u);
+            }
+            return res;
+        }
+        public static List<Material> ParseMaterialsEncoded(SqlDataReader rdr)
+        {
+            var res = new List<Material>();
+            while (rdr.Read())
+            {
+                Material mat = new Material();
+                mat.Author = (string)rdr["author"];
+                mat.Name = (string)rdr["name"];
+                mat.commentsRaw = (string)rdr["comments"];
+                mat.Description = (string)rdr["description"];
+                mat.FolderName = (string)rdr["folder"];
+                mat.Category = ((string)rdr["category"]);
+                res.Add(mat);
+            }
+            return res;
+        }
+        public static List<MyTask> ParseTasksEncoded(SqlDataReader rdr)
+        {
+            var res = new List<MyTask>();
+            while (rdr.Read())
+            {
+                MyTask t = new();
+                t.Author = (string)rdr["author"];
+                t.Name = (string)rdr["name"];
+                t.Description = (string)rdr["description"];
+                t.flagsRaw = (string)rdr["flags"];
+                t.commentsRaw = (string)rdr["comments"];
+                string materials = (string)rdr["links"];
+                t.MaterialLinks = materials.Split(':').ToList();
+                t.FoulderName = (string)rdr["fldr"];
+                res.Add(t);
+            }
+            return res;
+        }
         public static List<User> ParseUsers(SqlDataReader rdr)
         {
             var res = new List<User>();
@@ -119,17 +168,9 @@ namespace GooDDevWebSite.Models
                     t.commentsRaw += $"{encoder.Decode(parts[0])}:{encoder.Decode(parts[1])};";
                 }
                 string materials = (string)rdr["links"];
-                /*
                 t.MaterialLinks = materials.Split(':').Select(   // WTF?
                     x => (x != "") ? encoder.Decode(x) : x
                     ).ToList(); 
-                */
-                t.MaterialLinks = new List<string>();
-                foreach (string lnk in materials.Split(':'))
-                {
-                    if (lnk == null) throw new NullReferenceException("BBBBBBB");
-                    t.MaterialLinks.Add(encoder.Decode(lnk));
-                }
                 t.FoulderName = (string)rdr["fldr"];
                 res.Add(t);
             }

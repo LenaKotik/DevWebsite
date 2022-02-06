@@ -1,0 +1,230 @@
+﻿@model MyTask
+@{ 
+    ViewData["Title"] = Model.Name;
+    User user = (User)ViewData["user"];
+}
+<div>
+    <h1>@Model.Name</h1>
+    <hr />
+    <p>
+        @Model.Description
+        <br />~~~~~~~~~~~~~~~~~~<br />
+        @Model.Category
+    </p>
+    <div>
+        @foreach (string path in Model.Images)
+        {
+            <img src="@(path)" alt="@(System.IO.Path.GetFileName(path))" />
+        }
+    </div>
+    <h6>Прикрепленные материалы</h6>
+    <div>
+        @foreach (string link in Model.MaterialLinks)
+        {
+            <a href="/Materials/At?name=@(link)">@link</a><br />
+        }
+    </div>
+    <p>Метки</p>
+    <ul>
+        @foreach (KeyValuePair<string, string> flag in Model.Flags)
+        {
+            <li>@flag.Key : @flag.Value</li>
+        }
+    </ul>
+    @if (user.Role == Role.Manager || user.Role == Role.Admin)
+    {
+        if (!Model.Flags.Any(x => x.Value == "Для бета"))
+        {
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="Для бета" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="Для бета" />
+            </form>
+        }
+        if (!Model.Flags.Any(x => x.Value == "Для демо"))
+        {
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="Для демо" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="Для демо" />
+            </form>
+        }
+        if (!Model.Flags.Any(x => x.Value == "Срочно"))
+        {
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="Срочно" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="Срочно" />
+            </form>
+        }
+        if (!Model.Flags.Any(x => x.Value == "Не срочно"))
+        {
+
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="Не срочно" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="Не срочно" />
+            </form>
+        }
+        if (!Model.Flags.Any(x => x.Value == "на доработке"))
+        {
+
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="на доработке" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="на доработке" />
+            </form>
+        }
+    }
+    @if (user.Role == Role.Programmer)
+    {
+        if (!Model.Flags.Any(x => x.Value == "В разработке у художников"))
+        {
+
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="В разработке у художников" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="В разработке у художников" />
+            </form>
+        }
+        else if (!Model.Flags.Any(x => x.Value == "Выполнено художником"))
+        {
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="Выполнено художником" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="Выполнено художником" />
+            </form>
+        }
+    }
+    @if (user.Role == Role.Artist)
+    {
+        if (!Model.Flags.Any(x => x.Value == "В разработке у художников"))
+        {
+
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="В разработке у художников" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="В разработке у художников" />
+            </form>
+        }
+        else if (!Model.Flags.Any(x => x.Value == "Выполнено художником"))
+        {
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="Выполнено художником" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="Выполнено художником" />
+            </form>
+        }
+    }
+    @if (user.Role == Role.Designer)
+    {
+        if (!Model.Flags.Any(x => x.Value == "В разработке у моделлеров"))
+        {
+
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="В разработке у моделлеров" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="В разработке у моделлеров" />
+            </form>
+        }
+        else if (!Model.Flags.Any(x => x.Value == "Выполнено моделлером"))
+        {
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="Выполнено моделлером" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="Выполнено моделлером" />
+            </form>
+        }
+    }
+    @if (user.Role == Role.Writer)
+    {
+        if (!Model.Flags.Any(x => x.Value == "В разработке у сценаристов"))
+        {
+
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="В разработке у сценаристов" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="В разработке у сценаристов" />
+            </form>
+        }
+        else if (!Model.Flags.Any(x => x.Value == "Выполнено сценаристом"))
+        {
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="Выполнено сценаристом" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="Выполнено сценаристом" />
+            </form>
+        }
+    }
+    @if (user.Role == Role.SFXer)
+    {
+        if (!Model.Flags.Any(x => x.Value == "В разработке у звуковиков"))
+        {
+
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="В разработке у звуковиков" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="В разработке у звуковиков" />
+            </form>
+        }
+        else if (!Model.Flags.Any(x => x.Value == "Выполнено звуковиком"))
+        {
+            <form asp-action="Flag" asp-controller="Tasks">
+                <input type="hidden" name="flag" value="Выполнено звуковиком" />
+                <input type="hidden" name="task" value="@(Model.Name)" />
+                <input type="hidden" name="name" value="@(user.Name)" />
+                <input type="submit" value="Выполнено звуковиком" />
+            </form>
+        }
+    }
+    @if (Model.Flags.Where(x => x.Value.StartsWith("Выполнено")).Any(x => x.Key == user.Name))
+    {
+        if (!Model.Flags.Any(x => x.Value == "На приёме у руководства"))
+                {
+
+        <form asp-action="Flag" asp-controller="Tasks">
+            <input type="hidden" name="flag" value="На приёме у руководства" />
+            <input type="hidden" name="task" value="@(Model.Name)" />
+            <input type="hidden" name="name" value="@(user.Name)" />
+            <input type="submit" value="Отправить руководству" />
+        </form>
+                }
+    }
+    <hr />
+    <h5>Комментарии:</h5>
+    @if (Context.Request.Cookies.ContainsKey("username"))
+    {
+
+        <form class="comment" asp-action="Comment" asp-controller="Tasks">
+            <strong>@Context.Request.Cookies["username"]</strong><br />
+            <textarea style="resize:none; width:50%" placeholder="Оставить коментарий..." name="text" required></textarea><input type="submit" value="Отправить" />
+            <input type="hidden" value="@(Context.Request.Cookies["username"])" name="author" required />
+            <input type="hidden" value="@Model.Name" name="task" />
+        </form>
+    }
+    else
+    {
+        <a asp-action="SignIn" asp-controller="Home">Войти</a>
+    }
+    @foreach (KeyValuePair<string, string> comment in Model.Comments)
+    {
+        <div class="comment">
+            <strong>@comment.Key</strong>
+            <pre>@comment.Value</pre>
+        </div>
+    }
+</div>

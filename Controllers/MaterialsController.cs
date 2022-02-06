@@ -35,6 +35,8 @@ namespace GooDDevWebSite.Views.Materials
                 .Where(x => x.Contains("img")).Select(x=>x.Replace(environment.WebRootPath,"")).ToList(); // looks scary
             return View("Material", item);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Comment(string text, string author, string material)
         {
             if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
@@ -112,6 +114,7 @@ namespace GooDDevWebSite.Views.Materials
         }
 #pragma warning disable CS8604
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [RequestFormLimits(MultipartBodyLengthLimit =long.MaxValue)] // hope thats enough lol
         public IActionResult Upload(IFormFile? file, IFormFileCollection? images, string author, string? name, string? description, string? cat, string? subcat)
         {
@@ -131,6 +134,7 @@ namespace GooDDevWebSite.Views.Materials
             return Redirect("/Materials");
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Update(IFormFile? file, IFormFileCollection? images, string? name, string? description, string? cat, string? subcat)
         {
             if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");

@@ -10,19 +10,19 @@ CREATE TABLE Materials
 (
 id INT IDENTITY PRIMARY KEY not null,
 name VARCHAR(60) not null,
-description VARCHAR(500) not null default(''),
+description VARCHAR(5000) not null default(''),
 folder VARCHAR(30) not null,
 imgs INT not null, default(0), -- will be removed
 comments VARCHAR(500) not null default(''),
 category VARCHAR(100) not null,
 author VARCHAR(60) not null
-); -- 1250 + 8 = 1258 bytes
+); -- 5750 + 8 = 5758 bytes
 CREATE TABLE Tasks
 (
 id INT IDENTITY PRIMARY KEY not null,
 author VARCHAR(60) not null,
 name VARCHAR(60) not null,
-description VARCHAR(500) not null default(''),
+description VARCHAR(5000) not null default(''),
 comments VARCHAR(500) not null default(''),
 flags VARCHAR(500) not null default(''),
 imgs INT not null default(0), -- will be removed
@@ -30,4 +30,4 @@ links VARCHAR(300) not null default(''),
 fldr VARCHAR(30) not null,
 role TINYINT not null default(0),
 category VARCHAR(50) not null default('')
-); -- 2000 + 9 = 2009 bytes
+); -- 6420 + 9 = 6429 bytes

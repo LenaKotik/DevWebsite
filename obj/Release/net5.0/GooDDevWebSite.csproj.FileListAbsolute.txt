@@ -243,11 +243,8 @@ C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\GooDDevWebSite.TagHe
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\GooDDevWebSite.TagHelpers.output.cache
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\GooDDevWebSite.RazorCoreGenerate.cache
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Home\Admin.cshtml.g.cs
-C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Home\Editor.cshtml.g.cs
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Home\Index.cshtml.g.cs
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Home\SignIn.cshtml.g.cs
-C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Home\Task.cshtml.g.cs
-C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Home\Tasks.cshtml.g.cs
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Materials\Display.cshtml.g.cs
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Materials\Editor.cshtml.g.cs
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Materials\Err.cshtml.g.cs
@@ -266,3 +263,6 @@ C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\GooDDevWebSite.dll
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\ref\GooDDevWebSite.dll
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\GooDDevWebSite.pdb
 C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\GooDDevWebSite.genruntimeconfig.cache
+C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Tasks\Editor.cshtml.g.cs
+C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Tasks\Task.cshtml.g.cs
+C:\Users\User\Desktop\C#stuff\DevWebsite\obj\Release\net5.0\Razor\Views\Tasks\Tasks.cshtml.g.cs

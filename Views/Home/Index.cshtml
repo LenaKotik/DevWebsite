@@ -19,11 +19,11 @@ else
                 }
 @if (Model.Role == Role.Admin || Model.Role == Role.Manager)
                 {
-                    <a asp-action="CreateTask" asp-controller="Home">Добавить задачу</a>
+                    <a asp-action="Create" asp-controller="Tasks">Добавить задачу</a>
                 }
 <hr />
 <a asp-action="Index" asp-controller="Materials">Перейти к материалам</a><br />
-<a asp-action="Tasks" asp-controller="Home">Открыть все задачи</a><br />
+<a asp-action="Index" asp-controller="Tasks">Открыть все задачи</a><br />
 }
 else
 {

@@ -1,0 +1,41 @@
+﻿@model List<Material>
+@{ 
+    ViewData["Title"] = "Редактор";
+}
+
+<form asp-action="Upload" asp-controller="Tasks" method="post">
+    <input name="author" type="hidden" value="@(Context.Request.Cookies["username"])"/>
+    <label>
+        Задание для
+        <select name="role">
+            <option value="1">Программистов</option>
+            <option value="2">Менеджеров</option>
+            <option value="3">Сценаристов</option>
+            <option value="4">Художников</option>
+            <option value="5">Моделеров</option>
+            <option value="6">Звуковиков</option>
+        </select>
+    </label><br />
+    <input name="name" placeholder="Заголовок" type="text" /><br />
+    <textarea style="resize: none; width: 70%" name="description" placeholder="Описание"></textarea><br />
+    <input type="file" name="images" value="Загрузить картинки" multiple /><br />
+    <input type="submit" value="Отправить" />
+    <input id="linksinput" type="hidden" name="materialLinks"/>
+</form>
+<hr />
+    <h4>Прикрепить материал</h4>
+<div>
+    <ul id="materials">
+    @for (int i = 0;i < Model.Count;i++)
+    {
+        Material m = Model[i];
+                <li id="mat@(i)"><a href="#" onclick="linkMaterial('@(m.Name)', @(i))">@(m.Name)</a></li>
+    }
+    </ul>
+</div>
+<hr />
+<div class="position-sticky border-left float-left">
+    <h4>Ссылки на материалы:</h4>
+    <ul id="links">
+    </ul>
+</div>

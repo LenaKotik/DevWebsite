@@ -48,6 +48,8 @@ namespace GooDDevWebSite.Controllers
             }
             return NotFound();
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         async public Task<IActionResult> NewUser(User u, string author)
         {
             if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
@@ -111,56 +113,6 @@ namespace GooDDevWebSite.Controllers
             HttpContext.Response.Cookies.Delete("email");
             HttpContext.Response.Cookies.Delete("username");
             return Redirect(Url.Action("Index", "Home"));
-        }
-        async public Task<IActionResult> CreateTask()
-        {
-            if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
-            List<Material> model = await Database.Read<Material>("SELECT * FROM Materials", Parsers.ParseMaterials);
-            return View("Editor", model);
-        }
-        public IActionResult Flag(string name, string task, string flag)
-        {
-            DoubleEncoding encoder = new DoubleEncoding();
-            string encname = encoder.Encode(name);
-            task = encoder.Encode(task);
-            flag = encoder.Encode(flag);
-            Database.Execute($"UPDATE Tasks SET flags=flags + '{encname}:{flag};' WHERE name='{task}';");
-            return Redirect($"/Home/Task?name={name}");
-        }
-        public IActionResult UploadTask(Role role, string name, string description, IFormFileCollection? images, string author, string materialLinks)
-        {
-            if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
-            FileUploadManager f = new FileUploadManager(environment.WebRootPath);
-            f.UploadTask(role, name, description, images, author, materialLinks);
-            return Redirect("/");
-        }
-        async public Task<IActionResult> Tasks()
-        {
-            if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
-            List<MyTask> model = await Database.Read<MyTask>("SELECT * FROM Tasks", Parsers.ParseTasks);
-            return View(model);
-        }
-        async public Task<IActionResult> Task(string name)
-        {
-            if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
-            DoubleEncoding encoder = new();
-            ViewData["user"] = (await Database.Read<User>($"SELECT * FROM Users WHERE name='{encoder.Encode(HttpContext.Request.Cookies["username"])}';", Parsers.ParseUsers)).Single();
-            name = encoder.Encode(name);
-            MyTask model = (await Database.Read<MyTask>($"SELECT * FROM Tasks WHERE name='{name}'", Parsers.ParseTasks)).Single();
-            model.Images = Directory.GetFiles(environment.WebRootPath + '/' + model.FoulderName)
-                .Where(x => x.Contains("img")).Select(x => x.Replace(environment.WebRootPath, "")).ToList(); // looks scary
-            return View(model);
-        }
-        public IActionResult Comment(string text, string author, string task)
-        {
-            if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
-            var encoder = new DoubleEncoding();
-            author = encoder.Encode(author);
-            text = encoder.Encode(text);
-            string etask = encoder.Encode(Path.GetFileNameWithoutExtension(task)) + Path.GetExtension(task);
-            string str = $"{author}:{text};";
-            Database.Execute($"UPDATE Tasks SET comments=comments + '{str}' where name='{etask}' ");
-            return Redirect($"/Home/Task?name={task}");
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

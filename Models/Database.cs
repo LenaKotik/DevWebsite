@@ -99,6 +99,7 @@ namespace GooDDevWebSite.Models
                 string materials = (string)rdr["links"];
                 t.MaterialLinks = materials.Split(':').ToList();
                 t.FoulderName = (string)rdr["fldr"];
+                t.Role = User.GetRole((int?)((rdr["role"] != DBNull.Value) ? rdr["role"] : null));
                 res.Add(t);
             }
             return res;
@@ -172,6 +173,7 @@ namespace GooDDevWebSite.Models
                     x => (x != "") ? encoder.Decode(x) : x
                     ).ToList(); 
                 t.FoulderName = (string)rdr["fldr"];
+                t.Role = User.GetRole((int?)((rdr["role"] != DBNull.Value) ? rdr["role"] : null));
                 res.Add(t);
             }
             return res;

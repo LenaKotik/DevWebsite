@@ -31,9 +31,23 @@ namespace GooDDevWebSite.Views.Materials
             string ext = Path.GetExtension(name);
             name = encoder.Encode(Path.GetFileNameWithoutExtension(name)) + ext;
             Material item = (await Database.Read<Material>($"SELECT * FROM Materials Where name='{name}';", Parsers.ParseMaterials)).Single();
-            item.Images = Directory.GetFiles(environment.WebRootPath+'/'+item.FolderName)
+            item.Images = Directory.GetFiles(environment.WebRootPath+"/images/"+item.FolderName)
                 .Where(x => x.Contains("img")).Select(x=>x.Replace(environment.WebRootPath,"")).ToList(); // looks scary
             return View("Material", item);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        async public Task<IActionResult> DeleteComment(string text, string author, string task) // MUST BE OPTIMIZED
+        {
+            if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
+            DoubleEncoding encoder = new();
+            string enctask = Path.GetFileNameWithoutExtension(encoder.Encode(task)) + Path.GetExtension(task);
+            string encauthor = encoder.Encode(author);
+            MyTask target = (await Database.Read<MyTask>($"SELECT * FROM Tasks WHERE author='{encauthor}' AND name='{enctask}';", Parsers.ParseTasksEncoded)).Single();
+            target.Comments.Remove(new KeyValuePair<string, string>(author, text)); // should remove exactly one comment
+            Database.Execute($"UPDATE Materials WHERE name='{enctask}' SET comments='{target.commentsRaw}'");
+            return Redirect($"/Materials/At?name={task}");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -51,10 +65,11 @@ namespace GooDDevWebSite.Views.Materials
         public IActionResult Download(string f, string ext) 
         {
             if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
-            FileStream stream = new FileStream(this.environment.WebRootPath+'/'+ f + "/file"+ext,FileMode.Open, FileAccess.Read);
+            FileStream stream = new FileStream(this.environment.WebRootPath+ "/files/" + f + "/file"+ext,FileMode.Open, FileAccess.Read);
             string mime = MimeUtility.GetMimeMapping("file" + ext);
             return File(stream, mime, "file"+ext);
         }
+        #region categories
         async public Task<IActionResult> Images()
         {
             if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
@@ -95,6 +110,7 @@ namespace GooDDevWebSite.Views.Materials
             ViewData["Title"] = "Анимации";
             return View("Display", model);
         }
+        #endregion
         public IActionResult Create(string Category)
         {
             if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
@@ -104,6 +120,8 @@ namespace GooDDevWebSite.Views.Materials
         async public Task<IActionResult> Edit(string name)
         {
             if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
+            DoubleEncoding encoder = new();
+            name = encoder.Encode(name);
             var data = await Database.Read<Material>($"SELECT * FROM Materials WHERE name = {name}", Parsers.ParseMaterials);
             return View("Editor", data.Single());
         }

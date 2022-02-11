@@ -1,3 +1,4 @@
+using GooDDevWebSite.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -24,6 +25,11 @@ namespace GooDDevWebSite
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddAuthentication().AddCookie("Auth");
+            services.AddAuthorization(conf =>
+            {
+                conf.AddPolicy("Auth", policy => policy.RequireAuthenticatedUser());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,6 +46,13 @@ namespace GooDDevWebSite
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+
+            app.UseProtectFolder(new ProtectFolderConfiguration
+                (
+                "Auth",
+                "/files"
+                ));
+
             app.UseStaticFiles();
 
             app.UseRouting();

@@ -24,8 +24,8 @@ namespace GooDDevWebSite.Models
             category = category.Replace('\'', ' '); // sneaky SQL injections
             subcategory = encoder.Encode(subcategory); 
             Database.Execute($"INSERT INTO Materials VALUES ('{name + extension}', '{description}', '{fldr}', '{((images != null) ? images.Count : 0)}', '', '{category}-{subcategory}', '{author}')");
-            Directory.CreateDirectory(Path.Combine(this.RootPath, fldr));
-            using (FileStream newfile = new FileStream(this.RootPath + fldr + "/file" + extension, FileMode.CreateNew, FileAccess.Write))
+            Directory.CreateDirectory(Path.Combine(this.RootPath, "/files/"+fldr));
+            using (FileStream newfile = new FileStream(this.RootPath + fldr + "/files/file" + extension, FileMode.CreateNew, FileAccess.Write))
             {
                 Stream stream = file.OpenReadStream();
                 byte[] data = new byte[stream.Length];
@@ -36,7 +36,9 @@ namespace GooDDevWebSite.Models
             if (images != null)
                 for (int x = 0; x < images.Count; x++)
                 {
-                    this.SaveImage(images[x], $"{this.RootPath + fldr}/img{x}" + Path.GetExtension(images[x].FileName));
+                    string dir = $"{this.RootPath}/images/{fldr}";
+                    Directory.CreateDirectory(dir);
+                    this.SaveImage(images[x], dir+"/img{x}" + Path.GetExtension(images[x].FileName));
                 }
         }
         async public void Update(IFormFile? file, IFormFileCollection? images, string name, string description, string category, string subcategory)
@@ -51,7 +53,7 @@ namespace GooDDevWebSite.Models
                 Stream stream = file.OpenReadStream();
                 byte[] data = new byte[file.Length];
                 await stream.ReadAsync(data, 0, data.Length);
-                FileStream fileStr = new FileStream($"{this.RootPath + material.FolderName}/file" + Path.GetExtension(material.Name), FileMode.OpenOrCreate, FileAccess.Write);
+                FileStream fileStr = new FileStream($"{this.RootPath}/files/{material.FolderName}/file" + Path.GetExtension(material.Name), FileMode.OpenOrCreate, FileAccess.Write);
                 fileStr.Write(data, 0, data.Length);
                 fileStr.Flush();
                 fileStr.Close();
@@ -60,7 +62,7 @@ namespace GooDDevWebSite.Models
             {
                 for (int x = 0; x < images.Count; x++)
                 {
-                    this.SaveImage(images[x], $"{this.RootPath+material.FolderName}/img{x}"+Path.GetExtension(images[x].FileName));
+                    this.SaveImage(images[x], $"{this.RootPath}/images/{material.FolderName}/img{x}"+Path.GetExtension(images[x].FileName));
                 }
             }
         }
@@ -81,22 +83,17 @@ namespace GooDDevWebSite.Models
             Database.Execute($"INSERT INTO Tasks VALUES ('{author}', '{name}', '{description}', '', '', 0{/*must be fixed when we change the DB*/""}, '{lnks}', '{fldr}', {r}, '')");
             if (images != null)
             {
-                var dir = this.RootPath + '/' + fldr;
+                var dir = this.RootPath + "/images/" + fldr;
                 Directory.CreateDirectory(dir);
                 for (int i = 0;i < images.Count;i++)
                     this.SaveImage(images[i], $"{dir}/img{i}");
             }
         }
-        async public void SaveImage(IFormFile image, string path = "default_path")
+        async public void SaveImage(IFormFile image, string path)
         {
-            if (path == "default_path")
-            {
-                path = this.RootPath + '/' + Hash() + Path.GetExtension(image.FileName);
-            }
             Stream stream = image.OpenReadStream();
             byte[] data = new byte[image.Length];
             await stream.ReadAsync(data, 0, data.Length);
-
             using (FileStream pic = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 pic.Write(data, 0, data.Length);

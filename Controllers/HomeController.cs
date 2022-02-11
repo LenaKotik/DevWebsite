@@ -36,7 +36,7 @@ namespace GooDDevWebSite.Controllers
                 List<User> users = (await Database.Read<User>($"SELECT * FROM Users WHERE email = '{HttpContext.Request.Cookies["email"]}'", Parsers.ParseUsers));
                 ViewData["User"] = users.Single();
                 List<MyTask> model = await Database.Read<MyTask>("SELECT * FROM Tasks", Parsers.ParseTasks);
-                model = (model.Where(x => x.Flags.Any(x => x.Value == "Срочно")).Concat(model.Where(x => !x.Flags.Any(x => x.Value == "Срочно")))).Take(10).ToList(); // scary LINQ thing that takes 10 tasks, ordered by "Срочно" flag
+                model = (model.Where(x => x.Role == users.Single().Role).Where(x => x.Flags.Any(x => x.Value == "Срочно")).Concat(model.Where(x => !x.Flags.Any(x => x.Value == "Срочно")))).Take(10).ToList(); // scary LINQ thing that takes 10 tasks, ordered by "Срочно" flag
                 return View(model);
             }
             ViewData["User"] = null;
@@ -54,7 +54,11 @@ namespace GooDDevWebSite.Controllers
         }
         async public Task<IActionResult> GetBackup()
         {
+            if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
             List<User> u = await Database.Read<User>("SELECT * FROM Users", Parsers.ParseUsersEncoded);
+            DoubleEncoding decoder = new();
+            User? admin = u.SingleOrDefault(x => decoder.Decode(x.Name) == HttpContext.Request.Cookies["username"]);
+            if (admin == null) return NotFound();
             List<Material> m = await Database.Read<Material>("SELECT * FROM Materials", Parsers.ParseMaterialsEncoded);
             List<MyTask> t = await Database.Read<MyTask>("SELECT * FROM Tasks", Parsers.ParseTasksEncoded);
             AdminViewModel model = new AdminViewModel()

@@ -28,7 +28,7 @@ namespace GooDDevWebSite.Controllers
             ViewData["user"] = (await Database.Read<User>($"SELECT * FROM Users WHERE name='{encoder.Encode(HttpContext.Request.Cookies["username"])}';", Parsers.ParseUsers)).Single();
             name = encoder.Encode(name);
             var model = (await Database.Read<MyTask>($"SELECT * FROM Tasks WHERE name='{name}'", Parsers.ParseTasks)).Single();
-            model.Images = Directory.GetFiles(environment.WebRootPath + '/' + model.FoulderName)
+            model.Images = Directory.GetFiles(environment.WebRootPath + "/images/" + model.FoulderName)
                 .Where(x => x.Contains("img")).Select(x => x.Replace(environment.WebRootPath, "")).ToList(); // looks scary
             return View("Task",model);
         }
@@ -51,11 +51,11 @@ namespace GooDDevWebSite.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upload(Role role, string name, string description, IFormFileCollection? images, string author, string materialLinks)
+        public IActionResult Upload(MyTask task, IFormFileCollection? images, string materialLinks)
         {
             if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
             FileUploadManager f = new FileUploadManager(environment.WebRootPath);
-            f.UploadTask(role, name, description, images, author, materialLinks);
+            f.UploadTask(task.Role, task.Name, task.Description, images, task.Author, materialLinks);
             return Redirect("/");
         }
         [HttpPost]
@@ -64,9 +64,9 @@ namespace GooDDevWebSite.Controllers
         {
             if (!HttpContext.Request.Cookies.ContainsKey("username")) return Redirect("/Home/SignIn");
             DoubleEncoding encoder = new();
-            task = encoder.Encode(task);
+            string enctask = encoder.Encode(task);
             string encauthor = encoder.Encode(author);
-            MyTask target = (await Database.Read<MyTask>($"SELECT * FROM Tasks WHERE author='{encauthor}' AND name='{task}';", Parsers.ParseTasks)).Single();
+            MyTask target = (await Database.Read<MyTask>($"SELECT * FROM Tasks WHERE author='{encauthor}' AND name='{enctask}';", Parsers.ParseTasks)).Single();
             target.Comments.Remove(new KeyValuePair<string, string>(author, text)); // should remove exactly one comment
             string comments = "";
             foreach (string comment in target.commentsRaw.Split(';'))

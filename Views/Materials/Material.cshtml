@@ -40,9 +40,18 @@
     }
     @foreach (KeyValuePair<string,string> comment in Model.Comments)
         {
-     <div class="comment">
-         <strong>@comment.Key</strong>
-         <pre>@comment.Value</pre>
-     </div>
+<div class="comment">
+    <strong>@comment.Key</strong>
+    <pre>@comment.Value</pre>
+    @if (comment.Key == Context.Request.Cookies["username"])
+    {
+        <form>
+            <input type="submit" style="color:red" value="Удалить" />
+            <input type="hidden" name="task" value="@(Model.Name)" />
+            <input type="hidden" name="author" value="@(comment.Key)" />
+            <input type="hidden" name="text" value="@(comment.Value)" />
+        </form>
+    }
+</div>
         }
 </div>

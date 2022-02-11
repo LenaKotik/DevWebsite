@@ -1,8 +1,8 @@
 ﻿div.task {
-    background-color:aqua;
-    border:2px thin black;
-    border-radius:4px 4px;
-    cursor:pointer;
+    background-color: aqua;
+    border: 2px groove black;
+    border-radius: 4px 4px;
+    cursor: pointer;
 }
 .comment {
     border:1px solid black;

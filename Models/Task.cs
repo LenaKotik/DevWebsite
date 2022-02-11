@@ -16,7 +16,7 @@ namespace GooDDevWebSite.Models
             get
             {
                 List<KeyValuePair<string, string>> res = new List<KeyValuePair<string, string>>();
-                foreach (string flag in flagsRaw.Split(';'))
+                foreach (string flag in (flagsRaw ?? "").Split(';'))
                     if (flag != "") // excluding the last split
                         res.Add(new KeyValuePair<string, string>(flag.Split(':')[0], flag.Split(':')[1]));
                 return res;
@@ -33,7 +33,7 @@ namespace GooDDevWebSite.Models
             get
             {
                 List<KeyValuePair<string, string>> res = new List<KeyValuePair<string, string>>();
-                foreach (string comment in commentsRaw.Split(';'))
+                foreach (string comment in (commentsRaw ?? "").Split(';'))
                     if (comment != "") // excluding the last split
                         res.Add(new KeyValuePair<string, string>(comment.Split(':')[0], comment.Split(':')[1]));
                 return res;
